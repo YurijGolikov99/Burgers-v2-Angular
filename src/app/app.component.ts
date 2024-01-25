@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
+import {AppService} from "./app.service";
 
 @Component({
   selector: 'app-root',
@@ -13,13 +14,13 @@ export class AppComponent {
 
 
   //обавим конструктор, который позволит использовать модуль для форм
-  form= this.fb.group({
+  form = this.fb.group({
     order: ["", Validators.required],
     name: ["", Validators.required],
     phone: ["", Validators.required],
   });
 
-  productsData= [
+  productsData = [
     {
       image: "1.png",
       title: "Бургер чеддер & бекон",
@@ -130,7 +131,7 @@ export class AppComponent {
     }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private appService: AppService) {
   }
 
   scrollTo(target: HTMLElement, burger?: any) {
@@ -142,6 +143,19 @@ export class AppComponent {
 
   confirmOrder() {
     if (this.form.valid) {
+
+      this.appService.senOrder(this.form.value)
+        .subscribe(
+          {
+            next: (response: any) => {
+              alert(response.message);
+              this.form.reset();
+            },
+            error: (response) => {
+              alert(response.error.message);
+            },
+          }
+        )
       alert("Спасибо за заказ! Мы скоро свяжемся с вами!");
       this.form.reset();
     }
@@ -154,7 +168,7 @@ export class AppComponent {
     if (this.currency === "$") {
       newCurrency = "₽";
       coefficient = 90;
-    } else if (this.currency === "₽"){
+    } else if (this.currency === "₽") {
       newCurrency = "BYN";
       coefficient = 3;
     } else if (this.currency === 'BYN') {
@@ -166,7 +180,7 @@ export class AppComponent {
     }
     this.currency = newCurrency;
 
-    this.productsData.forEach((item: any)=> {
+    this.productsData.forEach((item: any) => {
       item.price = +(item.basePrice * coefficient).toFixed(1);
     })
   }
