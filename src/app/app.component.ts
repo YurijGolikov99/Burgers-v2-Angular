@@ -13,7 +13,7 @@ export class AppComponent {
   currency = '$'
 
 
-  //обавим конструктор, который позволит использовать модуль для форм
+  //добавим конструктор, который позволит использовать модуль для форм
   form = this.fb.group({
     order: ["", Validators.required],
     name: ["", Validators.required],
